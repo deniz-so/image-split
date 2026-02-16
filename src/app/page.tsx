@@ -178,6 +178,7 @@ export default function Home() {
             className="relative z-10 flex flex-col items-center gap-8"
           >
             <ImageSplitAnimation
+              key={sliceCount}
               src={imageSrc}
               slices={sliceCount}
               width={440}
