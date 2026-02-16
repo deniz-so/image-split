@@ -4,10 +4,9 @@ import { useState, useEffect, useRef, useId } from "react";
 import { motion } from "framer-motion";
 
 interface TimingConfig {
-  drawingHold?: number;
-  scatter?: number;
+  delay?: number;
   reassemble?: number;
-  colorHold?: number;
+  hold?: number;
   fadeOut?: number;
 }
 
@@ -62,10 +61,9 @@ export default function ImageSplitAnimation({
   timing = {},
 }: ImageSplitAnimationProps) {
   const {
-    drawingHold = 2000,
-    scatter = 1600,
-    reassemble = 1800,
-    colorHold = 1500,
+    delay = 500,
+    reassemble = 2500,
+    hold = 2000,
     fadeOut = 800,
   } = timing;
 
@@ -74,8 +72,7 @@ export default function ImageSplitAnimation({
   const [offsets, setOffsets] = useState(() =>
     randomOffsets(slices, scatterDistance.x, scatterDistance.y, rotationRange)
   );
-  const [isAssembled, setIsAssembled] = useState(true);
-  const [isOutline, setIsOutline] = useState(true);
+  const [isAssembled, setIsAssembled] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
   const cancelRef = useRef(false);
 
@@ -85,13 +82,8 @@ export default function ImageSplitAnimation({
 
     const loop = async () => {
       while (!cancelRef.current) {
-        setIsOutline(true);
-        setIsVisible(true);
-        setIsAssembled(true);
-        await wait(drawingHold);
-        if (cancelRef.current) return;
-
         setIsAssembled(false);
+        setIsVisible(true);
         setOffsets(
           randomOffsets(
             slices,
@@ -100,15 +92,15 @@ export default function ImageSplitAnimation({
             rotationRange
           )
         );
-        await wait(scatter);
+
+        await wait(delay);
         if (cancelRef.current) return;
 
-        setIsOutline(false);
         setIsAssembled(true);
         await wait(reassemble);
         if (cancelRef.current) return;
 
-        await wait(colorHold);
+        await wait(hold);
         if (cancelRef.current) return;
 
         setIsVisible(false);
@@ -127,10 +119,9 @@ export default function ImageSplitAnimation({
     scatterDistance.x,
     scatterDistance.y,
     rotationRange,
-    drawingHold,
-    scatter,
+    delay,
     reassemble,
-    colorHold,
+    hold,
     fadeOut,
   ]);
 
@@ -175,6 +166,8 @@ export default function ImageSplitAnimation({
             ? `inset(0 ${end}% 0 ${start}%)`
             : `inset(${start}% 0 ${end}% 0)`;
 
+        const entering = isAssembled && isVisible;
+
         return (
           <motion.div
             key={i}
@@ -190,15 +183,15 @@ export default function ImageSplitAnimation({
               x: isAssembled ? 0 : offsets[i]?.x ?? 0,
               y: isAssembled ? 0 : offsets[i]?.y ?? 0,
               rotate: isAssembled ? 0 : offsets[i]?.rotate ?? 0,
-              opacity: isVisible ? (isAssembled ? 1 : 0.75) : 0,
+              opacity: isVisible ? (isAssembled ? 1 : 0) : 0,
             }}
             transition={{
-              duration: isAssembled ? 1.2 : 0.9,
-              delay: isAssembled ? i * 0.15 : (slices - 1 - i) * 0.08,
-              ease: isAssembled
-                ? [0.16, 1, 0.3, 1]
-                : [0.55, 0, 1, 0.45],
-              opacity: { duration: 0.5 },
+              duration: entering ? 1.2 : 0,
+              delay: entering ? i * 0.3 : 0,
+              ease: [0.16, 1, 0.3, 1],
+              opacity: entering
+                ? { duration: 0.5, delay: i * 0.3 }
+                : { duration: 0.5 },
             }}
           >
             <img
@@ -211,8 +204,7 @@ export default function ImageSplitAnimation({
                 objectFit,
                 userSelect: "none",
                 pointerEvents: "none",
-                filter: isOutline ? `url(#${filterId})` : "none",
-                transition: "filter 0.8s ease-in-out",
+                filter: `url(#${filterId})`,
               }}
             />
           </motion.div>

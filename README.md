@@ -1,8 +1,6 @@
 # Image Split Animation
 
-A React component that transforms an image into a high-contrast drawing, shatters it into animated slices, and reassembles it as the full-color image. No CSS framework required.
-
-**Note:** This component only works with PNG images.
+A React component that splits an image into slices, scatters them, and animates them back together as a high-contrast drawing. Built with Framer Motion.
 
 ## Dependencies
 
@@ -21,29 +19,13 @@ npm install framer-motion
 
 ## Usage
 
-### Next.js
-
 ```tsx
 import ImageSplitAnimation from "@/components/ImageSplitAnimation";
 
 export default function Page() {
   return (
     <div style={{ background: "#0a0a0a", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
-      <ImageSplitAnimation src="/photo.png" alt="A photo" />
-    </div>
-  );
-}
-```
-
-### React (Vite, CRA, etc.)
-
-```tsx
-import ImageSplitAnimation from "./components/ImageSplitAnimation";
-
-function App() {
-  return (
-    <div style={{ background: "#0a0a0a", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
-      <ImageSplitAnimation src="/photo.png" alt="A photo" />
+      <ImageSplitAnimation src="/photo.png" />
     </div>
   );
 }
@@ -56,15 +38,16 @@ function App() {
 | `src` | `string` | **required** | Image source URL |
 | `alt` | `string` | `""` | Image alt text |
 | `className` | `string` | — | CSS class for the container |
-| `slices` | `number` | `3` | Number of vertical slices |
+| `slices` | `number` | `3` | Number of slices |
 | `width` | `number` | `400` | Container width in pixels |
 | `height` | `number` | `400` | Container height in pixels |
-| `dark` | `boolean` | `true` | Drawing style: `true` for white strokes, `false` for black |
+| `dark` | `boolean` | `true` | Drawing style: `true` for white strokes on dark, `false` for black strokes on light |
 | `objectFit` | `"contain" \| "cover" \| "fill" \| "none"` | `"contain"` | How the image fits its container |
+| `direction` | `"vertical" \| "horizontal"` | `"vertical"` | Slice direction |
 | `autoPlay` | `boolean` | `true` | Whether the animation loops automatically |
 | `scatterDistance` | `{ x: number, y: number }` | `{ x: 500, y: 300 }` | How far slices scatter |
 | `rotationRange` | `number` | `35` | Max rotation of scattered slices (degrees) |
-| `drawingContrast` | `{ slope: number, intercept: number }` | `{ slope: 5, intercept: -1.5 }` | Controls the ink drawing effect intensity |
+| `drawingContrast` | `{ slope: number, intercept: number }` | `{ slope: 5, intercept: -1.5 }` | Controls the drawing effect intensity |
 | `timing` | `TimingConfig` | see below | Phase durations in milliseconds |
 
 ### Timing
@@ -73,18 +56,24 @@ function App() {
 <ImageSplitAnimation
   src="/photo.png"
   timing={{
-    drawingHold: 2000,  // how long the drawing is shown
-    scatter: 1600,      // how long pieces stay scattered
-    reassemble: 1800,   // how long reassembly takes
-    colorHold: 1500,    // how long the full-color image is shown
-    fadeOut: 800,        // fade out before looping
+    delay: 500,        // pause before construction starts
+    reassemble: 2500,  // how long pieces take to fly in
+    hold: 2000,        // how long the completed drawing is shown
+    fadeOut: 800,       // fade out before looping
   }}
 />
 ```
 
+## Animation Flow
+
+1. Slices start scattered and invisible
+2. Each slice flies in and fades in to its position (staggered)
+3. Completed drawing holds
+4. Fades out and loops
+
 ## Examples
 
-### Subtle animation
+### Gentle entrance
 
 ```tsx
 <ImageSplitAnimation
@@ -95,7 +84,7 @@ function App() {
 />
 ```
 
-### Dramatic shatter
+### Dramatic construction
 
 ```tsx
 <ImageSplitAnimation
@@ -106,11 +95,11 @@ function App() {
 />
 ```
 
-### Light background
+### Horizontal slices on light background
 
 ```tsx
 <div style={{ background: "white" }}>
-  <ImageSplitAnimation src="/photo.png" dark={false} />
+  <ImageSplitAnimation src="/photo.png" dark={false} direction="horizontal" />
 </div>
 ```
 
@@ -122,14 +111,6 @@ function App() {
   drawingContrast={{ slope: 3, intercept: -0.8 }}
 />
 ```
-
-## Animation Flow
-
-1. Full assembled drawing is shown
-2. Drawing shatters into scattered slices
-3. Slices reassemble as the full-color image
-4. Full-color image holds
-5. Fades out and loops
 
 ## License
 

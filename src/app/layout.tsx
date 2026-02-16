@@ -7,7 +7,6 @@ const geistSans = Geist({
   subsets: ["latin"],
 });
 
-
 export const metadata: Metadata = {
   title: "Image Split Animation",
   description: "An interactive image split and reassemble animation component",
