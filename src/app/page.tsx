@@ -7,6 +7,7 @@ export default function Home() {
   const [imageSrc, setImageSrc] = useState<string | null>(null);
   const [dark, setDark] = useState(true);
   const [sliceCount, setSliceCount] = useState(3);
+  const [direction, setDirection] = useState<"vertical" | "horizontal">("vertical");
 
   const handleFile = useCallback((file: File) => {
     const url = URL.createObjectURL(file);
@@ -73,6 +74,7 @@ export default function Home() {
             width={420}
             height={420}
             dark={dark}
+            direction={direction}
           />
 
           {/* Controls */}
@@ -87,6 +89,18 @@ export default function Home() {
               }`}
             >
               {dark ? "Light mode" : "Dark mode"}
+            </button>
+
+            {/* Direction toggle */}
+            <button
+              onClick={() => setDirection((d) => d === "vertical" ? "horizontal" : "vertical")}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                dark
+                  ? "bg-neutral-800 text-neutral-200 hover:bg-neutral-700"
+                  : "bg-neutral-200 text-neutral-700 hover:bg-neutral-300"
+              }`}
+            >
+              {direction === "vertical" ? "Horizontal" : "Vertical"}
             </button>
 
             {/* Slice count */}
