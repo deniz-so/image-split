@@ -2,6 +2,8 @@
 
 A React component that splits an image into slices, scatters them, and animates them back together as a high-contrast drawing. Built with Framer Motion.
 
+> Works best with PNGs or SVGs.
+
 ## Dependencies
 
 - [React](https://react.dev) 18+
