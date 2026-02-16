@@ -10,8 +10,10 @@ export default function Home() {
   const [direction, setDirection] = useState<"vertical" | "horizontal">("vertical");
 
   const handleFile = useCallback((file: File) => {
-    const url = URL.createObjectURL(file);
-    setImageSrc(url);
+    setImageSrc((prev) => {
+      if (prev) URL.revokeObjectURL(prev);
+      return URL.createObjectURL(file);
+    });
   }, []);
 
   const handleDrop = useCallback(
