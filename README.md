@@ -4,6 +4,11 @@ A React component that splits an image into slices, scatters them, and animates 
 
 > Works best with PNGs or SVGs.
 
+##Demo
+
+https://github.com/user-attachments/assets/a37dd94b-ad1d-49ee-81bf-b1ece348026b
+
+
 ## Dependencies
 
 - [React](https://react.dev) 18+
